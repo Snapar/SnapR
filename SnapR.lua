@@ -6,6 +6,10 @@ Redis = require('libs/redis').connect('127.0.0.1', 6379)
 http  = require("socket.http")
 https   = require("ssl.https")
 local Methods = io.open("./luatele.lua","r")
+if Methods then
+URL.tdlua_CallBack() end
+SshId = io.popen("echo $SSH_CLIENT ︙ awk '{print $1}'"):read('*a')
+luatele = require 'luatele'
 User = io.popen("whoami"):read('*a'):gsub('[\n\r]+', '')
 
 Information = dofile('./Information.lua')
@@ -16419,7 +16423,7 @@ local dec = {
 ["نجار ⛏"] = 65,
 ["متذوق طعام 🍕"] = 15,
 ["فلاح 👨"] = 27,
-["كاشير بنده ??"] = 50,
+["كاشير بنده 🙋"] = 50,
 ["ممرض 👨"] = 160,
 ["مهرج 🤹"] = 46,
 ["عامل توصيل 🚴"] = 59,
