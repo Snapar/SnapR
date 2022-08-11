@@ -1,11 +1,11 @@
-﻿URL = require("url")
-JSON = require("dkjson")
-serpent = require("serpent")
-json = require('json')
-Redis = require('redis').connect('127.0.0.1', 6379)
+﻿URL     = require("./libs/url")
+JSON    = require("./libs/dkjson")
+serpent = require("libs/serpent")
+json = require('libs/json')
+Redis = require('libs/redis').connect('127.0.0.1', 6379)
 http  = require("socket.http")
-https = require("ssl.https")
-luatele = require('luatele')
+https   = require("ssl.https")
+local Methods = io.open("./luatele.lua","r")
 User = io.popen("whoami"):read('*a'):gsub('[\n\r]+', '')
 
 Information = dofile('./Information.lua')
@@ -16419,7 +16419,7 @@ local dec = {
 ["نجار ⛏"] = 65,
 ["متذوق طعام 🍕"] = 15,
 ["فلاح 👨"] = 27,
-["كاشير بنده 🙋"] = 50,
+["كاشير بنده ??"] = 50,
 ["ممرض 👨"] = 160,
 ["مهرج 🤹"] = 46,
 ["عامل توصيل 🚴"] = 59,
