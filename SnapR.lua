@@ -19781,17 +19781,31 @@ end
 end
 end
 ---
-if text == 'السورس' or text == 'سورس' or text == 'ياسورس' or text == 'يا سورس' then  
-local T =[[
-[- WeLCoMe To S𝘰𝘶𝘳𝘤𝘦 Ⴆᥣᥲ️ᥴ𝚔.](t.me/C_B_B_W)
- [- Source Explanations .](t.me/x_C_1_1)
+if text == 'السورس' or text == 'سورس' or text == 'يا سورس' or text == '↫  السورس ⌯' then
+local Text =[[
+⦑ Welcome to Source ⦒
+ ⦑ SOURCE Saske ⦒ 
+ꔹ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ꔹ 
+⌯︙[Source Channel](t.me/C_B_B_W)
+⌯︙[Source Update ](t.me/FIDRG) 
+⌯︙[Source developer](t.me/s00f4) 
+ꔹ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ꔹ 
+𓂅 . [TWS Saske](t.me/s0drgbot) 
 ]]
 keyboard = {} 
 keyboard.inline_keyboard = {
-{{text = '‹ ƚᥱᥲ️꧑ Ⴆᥣᥲ️ᥴ𝚔 ‹ ',url="t.me/C_B_B_W"}},
+{
+{text = '• تحديثات سـوࢪس ساسڰي •', url = 't.me/FIDRG'},
+},
+{
+{text = '• مطـوࢪ السـوࢪس •', url = 't.me/s00f4'},{text = '• شـࢪاء بوت •', url = 't.me/s0drgbot'},
+},
+{
+{text = '• سـوࢪس ساسڰي •', url = 't.me/C_B_B_W'},
+},
 }
 local msg_id = msg.id/2097152/0.5
-https.request("https://api.telegram.org/bot"..Token..'/sendPhoto?chat_id=' .. msg.chat_id .. '&photo=https://t.me/C_B_B_W&caption=' .. URL.escape(T).."&reply_to_message_id="..msg_id.."&parse_mode=markdown&disable_web_page_preview=true&reply_markup="..JSON.encode(keyboard))
+return https.request("https://api.telegram.org/bot"..Token..'/sendPhoto?chat_id=' .. msg.chat_id .. '&photo=https://t.me/C_B_B_W&caption=' .. URL.escape(Text).."&reply_to_message_id="..msg_id.."&parse_mode=markdown&disable_web_page_preview=true&reply_markup="..JSON.encode(keyboard))
 end
 if text == 'الاوامر' then
 if not msg.Admin then
